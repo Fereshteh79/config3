@@ -1,0 +1,46 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+    {{ object.title }}
+{% endblock %}
+
+{% block title %} | {{ object.title }}{% endblock %}
+
+{% block main %}
+    <!-- Page Header-->
+    <header class="masthead" style="background-image: url('{{ article.thumbnail.url }}')">
+        <div class="container position-relative px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <div class="site-heading">
+                        <h1>{{ object.title }}</h1>
+                        {% if article.is_special %}
+                            <span class="badge badge-danger" style="font-size: 14px">ویژه</span>
+                        {% endif %}
+                        <time>{{ object.jpublished }}</time>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <article class="mb-4">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7 text.justify">
+                    {% if object.is_special %}
+                        {% if user.is_autenticated and user.is_special_user or user == object.author or user.is_superuser %}
+                            {{ object.descriptions|safe }}
+                        {% else %}
+                            {{ article.descriptions|striptags|truncatewords:30 }}
+                            <p class="alert alert-warning">
+                                این مقاله ویژه است و برای مشاهده ی آن باید
+                                <a class="alert-link" href="#"></a> اشتراک ویژه تهیه کنید.</p>
+                        {% endif %}
+                    {% else %}
+                        {{ object.descriptions|safe }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </article>
+{% endblock %}

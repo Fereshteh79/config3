@@ -1,0 +1,22 @@
+@import url('https://cdn.fontcdn.ir/Font/Persian/Sahel/Sahel.css');
+
+.body {
+    direction: rtl !important;
+    text-align: right !important;
+    font-family: Sahel !important;
+}
+
+.myfont {
+    font-family: Sahel !important;
+}
+
+.btn-show-pass {
+    right: initial;
+    left: 0;
+}
+
+.errors {
+    color: red;
+    background-color: #fbd4d4;
+    padding: 20px 30px;
+}
