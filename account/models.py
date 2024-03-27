@@ -1,9 +1,10 @@
-from django.contrib.auth.base_user import AbstractBaseUser
+# from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
 
 
-class User(AbstractBaseUser):
+class User(AbstractUser):
     is_author = models.BooleanField(default=False, verbose_name="وضعیت نویسندگی")
     special_user = models.DateTimeField(
         default=timezone.now, verbose_name="کاربر ویژه تا"

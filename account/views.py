@@ -7,7 +7,7 @@ from .mixins import FieldsMixin, FormValidMixin, AuthorAccessMixin, SuperuserAcc
 from django.views.generic import ListView, UpdateView
 from blog.models import Article
 from .models import User
-from forms import ProfileForm
+from .forms import ProfileForm
 
 
 class ArtileList(AuthorsAccessMixin, ListView):
