@@ -41,7 +41,7 @@ class ArticleAdmin(admin.ModelAdmin):
         "slug",
         "author",
         "jpublished",
-        "is_special"
+        "is_special",
         "status",
         "get_categories",
     )

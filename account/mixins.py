@@ -36,8 +36,8 @@ class FormValidMixin:
         else:
             self.obj = form.save(commit=False)
             self.obj.author = self.request.user
-            if not self.obj.status == 'i':
-                self.obj.status = 'd'
+            if not self.obj.status == "i":
+                self.obj.status = "d"
             return super().form_valid(form)
 
 
@@ -46,9 +46,9 @@ class AuthorAccessMixin:
     def dispatch(self, request, pk, *args, **kwargs):
         article = get_object_or_404(Article, pk=pk)
         if (
-                article.author == request.user
-                and article.status in ['b', 'd']
-                or request.user.is_superuser
+            article.author == request.user
+            and article.status in ["b", "d"]
+            or request.user.is_superuser
         ):
             return super().dispatch(request, *args, **kwargs)
 

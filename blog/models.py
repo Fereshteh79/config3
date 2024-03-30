@@ -43,11 +43,12 @@ class Category(models.Model):
 
 
 class Article(models.Model):
-    STATUS_CHOICES = (("d", "Draft"),
-                      ("p", "Published"),
-                      ("i", "درحال بررسی"),  # investigation
-                      ("b", "برگشت داده شده"),  # back
-                      )
+    STATUS_CHOICES = (
+        ("d", "Draft"),
+        ("p", "Published"),
+        ("i", "درحال بررسی"),  # investigation
+        ("b", "برگشت داده شده"),  # back
+    )
     author = models.ForeignKey(
         User,
         null=True,

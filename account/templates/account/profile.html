@@ -22,6 +22,11 @@
                     <div class="col-6">
                         {{ form.email|as_crispy_field }}
                     </div>
+                    <div class="col-12">
+                        <label class="my-4">گذرواژه:
+                            <span>برای تغیر گذرواژه<a
+                                    href="{% url 'password_change' %}">کلیک کنید</a></span></label>
+                    </div>
                     <div class="col-6">
                         {{ form.firs_name|as_crispy_field }}
                     </div>
