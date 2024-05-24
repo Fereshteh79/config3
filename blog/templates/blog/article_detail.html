@@ -2,7 +2,7 @@
 {% load comment_tags %}
 {% load ratings %}
 {% load base_tags %}
-
+{% load humanize %}
 
 
 {% block title %}
@@ -22,7 +22,7 @@
                         {% if article.is_special %}
                             <span class="badge badge-danger" style="font-size: 14px">ویژه</span>
                         {% endif %}
-                        <time>{{ object.jpublished }}</time>
+                        <time>{{ object.published|naturaltime }}</time>
                         <div>{% ratings object %}</div>
                         <div> : بازدید ها{{ object.hits.count }}</div>
                     </div>
