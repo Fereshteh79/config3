@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta
+
+from django.db.models import Count, Q
 from django.views.generic import ListView, DetailView
 
 from account.mixins import AuthorAccessMixin
@@ -15,7 +18,13 @@ class ArticleList(ListView):
 class ArticleDetail(DetailView):
     def get_object(self, queryset=None):
         slug = self.kwargs.get("slug")
-        return get_object_or_404(Article.objects.published(), slug=slug)
+        article = get_object_or_404(Article.objects.published(), slug=slug)
+
+        ip_address = self.request.user.ip_address
+        if ip_address not in article.hits.all():
+            article.hits.add(ip_address)
+
+        return article
 
 
 class ArticlePreview(AuthorAccessMixin, DetailView):

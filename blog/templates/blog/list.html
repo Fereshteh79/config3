@@ -1,7 +1,11 @@
 {% extends 'blog/base.html' %}
+{% load static %}
+
+{% load ratings %}
+{% load base_tags %}
 
 {% block main %}
-    {% load static %}
+
     <!-- Page Header-->
     <header class="masthead" style="background-image: url('{% static 'blog/assets/img/home-bg.jpg' %}')">
         <div class="container position-relative px-4 px-lg-5">
@@ -19,6 +23,12 @@
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
                 {% block header %}{% endblock %}
+
+                <aside>
+                    {% popular_articles %}
+                    {% hot_articles %}
+                </aside>
+
                 {% for article in object_list %}
                     <!-- Post preview-->
                     <div class="post-preview">
@@ -29,6 +39,7 @@
                                     <span class="badge badge-danger" style="font-size: 14px">ویژه</span>
                                 {% endif %}
                             </h2>
+                            <div>{% ratings article %}</div>
                             <h3 class="post-subtitle">{{ article.descriptions|striptags|truncatewords:30 }}</h3>
                         </a>
                         <p class="post-meta">
@@ -41,6 +52,7 @@
                                 <a href="{% url 'blog:category' cat.slug %}">#{{ cat.title }}</a>
                             {% endfor %}
                         </div>
+                        <div> : بازدید ها{{ article.hits.count }}</div>
                     </div>
                     <!-- Divider-->
                     <hr class="my-4"/>

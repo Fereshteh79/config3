@@ -23,7 +23,6 @@ LOGIN_REDIRECT_URL = "account:home"
 LOGOUT_REDIRECT_URL = "account:login"
 LOGIN_URL = "account:login"
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -34,7 +33,6 @@ SECRET_KEY = "django-insecure-3@r71vltsd$t#3jec5+3(7e)s+b@k=mqx=!26i@)z5%i40b8nz
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -50,6 +48,10 @@ INSTALLED_APPS = [
     "account.apps.AccountConfig",
     "widget_tweaks",
     "crispy_forms",
+    "django_gravatar",
+    "comment",
+    "star_ratings",
+
 ]
 
 MIDDLEWARE = [
@@ -60,6 +62,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "blog.middleware.SaveIPAddressMiddleware",
 ]
 
 ROOT_URLCONF = "config3.urls"
@@ -82,7 +85,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config3.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -92,7 +94,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -112,7 +113,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -123,7 +123,6 @@ TIME_ZONE = "Asia/Tehran"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -146,5 +145,8 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'your_account@gmail.com'
-EMAIL_HOST_PASSWORD = 'your account password'
+EMAIL_HOST_USER = "your_account@gmail.com"
+EMAIL_HOST_PASSWORD = "your account password"
+
+STAR_RATINGS_STAR_HEIGHT = 16
+# STAR_RATINGS_RANGE = 7
