@@ -53,7 +53,7 @@ class ArticleAdmin(admin.ModelAdmin):
 
     @admin.display(description="دسته بندی ها")
     def get_categories(self, obj):
-        return [category.name for category in obj.category.all()]
+        return [category.title for category in obj.category.all()]
 
 
 admin.site.register(Article, ArticleAdmin)
