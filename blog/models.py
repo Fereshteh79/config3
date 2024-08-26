@@ -80,7 +80,8 @@ class Article(models.Model):
         max_length=1, choices=STATUS_CHOICES, verbose_name="وضعیت"
     )
     comments = GenericRelation(Comment)
-    hits = models.ManyToManyField(IPAddress, through_fields="ArticleHit", blank=True, related_name='hits',
+    hits = models.ManyToManyField(IPAddress, through='ArticleHit', through_fields=('article', 'ip_address'), blank=True,
+                                  related_name='hits',
                                   verbose_name='بازدید ها')
 
     class Meta:

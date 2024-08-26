@@ -70,7 +70,7 @@ class Register(CreateView):
     form_class = SignUpForm
     template_name = "account/register.html"
 
-    def form_valid(self, form, acccount_activation_token=None):
+    def form_valid(self, form, account_activation_token=None):
         user = form.save(commit=False)
         user.is_active = False
         user.save()
@@ -80,7 +80,7 @@ class Register(CreateView):
             'user': user,
             'domain': current_site.domain,
             'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-            'token': acccount_activation_token.make_token(user),
+            'token': account_activation_token.make_token(user),
         })
         to_email = form.cleaned_data.get('email')
         email = EmailMessage(
@@ -88,16 +88,16 @@ class Register(CreateView):
         )
         email.send()
         return HttpResponse('<a href="/login">ورود</a>کد فعالسازی ایمیل شما ارسال شد.')
+
     def activate(request, uidb64, token):
         try:
             uid = force_text(urlsafe_base64_encode(uidb64))
             user = User.objects.get(pk=uid)
         except(TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
-            if user not None and account_activation_token.check_token(user, token):
-                user.is_active= True
+            if user is not None and account_activation_token.check_token(user, token):
+                user.is_active = True
                 user.save()
                 return HttpResponse('ایمیل شما با موفقیت فعال شد. برای ورود<a href="/login">کلیک</a>کنید')
             else:
                 return HttpResponse('فعال سازی منقضی شده است.<a href="/account">دوباره امتحان کنید</a>')
-

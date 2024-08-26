@@ -13,7 +13,7 @@ class SaveIPAddressMiddleware:
         else:
             ip = request.META.get('REMOTE_ADDR')
         try:
-            ip_address = IPAddress.objects.get(id_address=ip)
+            ip_address = IPAddress.objects.get(ip_address=ip)
         except IPAddress.DoesNotExist:
             ip_address = IPAddress(ip_address=ip)
             ip_address.save()
