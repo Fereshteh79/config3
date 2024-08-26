@@ -15,12 +15,11 @@ from comment.views import CommentCreateMixin, BaseCommentView
 
 
 class CreateComment(CanCreateMixin, CommentCreateMixin):
-    comment = None
     email_service = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['comment'] = self.comment
+        context['comment'] = self.comment  # Access 'comment' here
         return context
 
     def get_template_names(self):
@@ -43,23 +42,25 @@ class CreateComment(CanCreateMixin, CommentCreateMixin):
             posted=time_posted
         )
 
+        self.comment = self.perform_create(temp_comment, self.request)  # Assign 'comment' here
         article = self.comment.content_object
         author_email = article.author.email
         user_email = self.comment.user.email
         if author_email == user_email:
             author_email = False
-            user_email = False
+        user_email = False
         parent_email = False
         if self.comment.parent:
             parent_email = self.comment.parent.user.email
             if parent_email in [author_email, user_email]:
                 parent_email = False
-
         if author_email:
             email = EmailMessage(
                 "دیدگاه جدید",
-                "دیدگاه جدید برای مقاله {} که شما نویسنده ی آن هستید ارسال شد:,(reverse('blog:detail', kwargs={'slug': article.slug}), article, current_site)n{}{}.format\"
-            to = [author_email]
+                f"دیدگاه جدید برای مقاله {article.title} که شما نویسنده‌ی آن هستید ارسال شد.\n"
+                f"لینک مقاله: {reverse('blog:detail', kwargs={'slug': article.slug})}\n"
+                f"دیدگاه: {comment.comment}\n{comment.user}\n{current_site}",
+                to=[author_email]
             )
             email.send()
 
