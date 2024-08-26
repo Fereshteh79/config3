@@ -16,12 +16,25 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
+from django.utils.translation import activate
+
+from account.views import Login, Register
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
     path("", include("blog.urls")),
+    path("", include("django.contrib.auth.urls")),
+    path("login/", Login.as_view(), name="login"),
+    path("register/", Register.as_view(), name="register"),
+    re_path(
+        r"^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$",
+        activate,
+        name="activate",
+    ),
+    path('ratings/', include('star_ratings.urls', namespace='ratings')),
     path("account/", include("account.urls")),
+    path("admin/", admin.site.urls),
+    path("comment/", include("comment.urls")),
 ]
 
 from django.conf import settings

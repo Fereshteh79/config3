@@ -4,6 +4,9 @@ from account.models import User
 from django.utils import timezone
 from extensions.utils import jalali_converter
 from django.utils.html import format_html
+from django.contrib.contenttypes.fields import GenericRelation
+
+from comment.models import Comment
 
 
 class ArticleManager(models.Manager):
@@ -14,6 +17,10 @@ class ArticleManager(models.Manager):
 class CategoryManager(models.Manager):
     def published(self):
         return self.filter(status=True)
+
+
+class IPAddress(models.Model):
+    ip_address = models.GenericIPAddressField(verbose_name='آدرس آی پی')
 
 
 class Category(models.Model):
@@ -43,11 +50,12 @@ class Category(models.Model):
 
 
 class Article(models.Model):
-    STATUS_CHOICES = (("d", "Draft"),
-                      ("p", "Published"),
-                      ("i", "درحال بررسی"),  # investigation
-                      ("b", "برگشت داده شده"),  # back
-                      )
+    STATUS_CHOICES = (
+        ("d", "Draft"),
+        ("p", "Published"),
+        ("i", "درحال بررسی"),  # investigation
+        ("b", "برگشت داده شده"),  # back
+    )
     author = models.ForeignKey(
         User,
         null=True,
@@ -71,6 +79,9 @@ class Article(models.Model):
     status = models.CharField(
         max_length=1, choices=STATUS_CHOICES, verbose_name="وضعیت"
     )
+    comments = GenericRelation(Comment)
+    hits = models.ManyToManyField(IPAddress, through_fields="ArticleHit", blank=True, related_name='hits',
+                                  verbose_name='بازدید ها')
 
     class Meta:
         verbose_name = "مقاله"
@@ -103,3 +114,9 @@ class Article(models.Model):
     category_to_str.short_description = "دسته یندی"
 
     objects = ArticleManager()
+
+
+class ArticleHit(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    ip_address = models.ForeignKey(IPAddress, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
