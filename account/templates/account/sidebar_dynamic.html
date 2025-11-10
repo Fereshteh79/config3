@@ -1,0 +1,90 @@
+{% load static %}
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="{% url 'account:home' %}" class="brand-link">
+        <img src="{% static 'account/adminlte/dist/img/AdminLTELogo.png' %}" alt="Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <span class="brand-text font-weight-light">پنل مدیریت</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar user panel -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <img src="{% static 'account/adminlte/dist/img/user2-160x160.jpg' %}" class="img-circle elevation-2" alt="User Image">
+            </div>
+            <div class="info">
+                <a href="{% url 'account:profile' %}" class="d-block">{{ user.get_full_name|default:user.username }}</a>
+            </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+                <!-- Dashboard -->
+                <li class="nav-item">
+                    <a href="{% url 'account:home' %}" class="nav-link">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>داشبورد</p>
+                    </a>
+                </li>
+
+                <!-- Articles Menu -->
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-newspaper"></i>
+                        <p>
+                            مقالات
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'account:article_create' %}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>ایجاد مقاله جدید</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'account:home' %}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>لیست مقالات</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Profile -->
+                <li class="nav-item">
+                    <a href="{% url 'account:profile' %}" class="nav-link">
+                        <i class="nav-icon fas fa-user"></i>
+                        <p>پروفایل</p>
+                    </a>
+                </li>
+
+                <!-- Admin only -->
+                {% if user.is_superuser %}
+                <li class="nav-header">مدیریت</li>
+                <li class="nav-item">
+                    <a href="{% url 'admin:index' %}" class="nav-link">
+                        <i class="nav-icon fas fa-cogs"></i>
+                        <p>پنل ادمین</p>
+                    </a>
+                </li>
+                {% endif %}
+
+                <!-- Logout -->
+                <li class="nav-item">
+                    <a href="{% url 'account:logout' %}" class="nav-link">
+                        <i class="nav-icon fas fa-sign-out-alt"></i>
+                        <p>خروج</p>
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>

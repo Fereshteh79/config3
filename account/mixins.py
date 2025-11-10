@@ -1,15 +1,9 @@
 from django.http import Http404
-from django.shortcuts import get_object_or_404
-from django.shortcuts import redirect
-
+from django.shortcuts import get_object_or_404, redirect
 from blog.models import Article
 
 
 class FieldsMixin:
-
-    def __init__(self):
-        self.fields = None
-
     def dispatch(self, request, *args, **kwargs):
         self.fields = [
             "title",
@@ -27,53 +21,39 @@ class FieldsMixin:
 
 
 class FormValidMixin:
-    def __init__(self):
-        self.obj = None
-
     def form_valid(self, form):
         if self.request.user.is_superuser:
-            form.save()
+            self.obj = form.save()
         else:
             self.obj = form.save(commit=False)
             self.obj.author = self.request.user
-            if not self.obj.status == "i":
+            if self.obj.status != "i":
                 self.obj.status = "d"
-            return super().form_valid(form)
+            self.obj.save()
+        return super().form_valid(form)
 
 
 class AuthorAccessMixin:
-
     def dispatch(self, request, pk, *args, **kwargs):
         article = get_object_or_404(Article, pk=pk)
-        if (
-            article.author == request.user
-            and article.status in ["b", "d"]
-            or request.user.is_superuser
-        ):
+        if (article.author == request.user and article.status in ["b", "d"]) \
+                or request.user.is_superuser:
             return super().dispatch(request, *args, **kwargs)
-
-        else:
-            raise Http404("you can't see this page")
+        raise Http404("You don't have permission to access this page.")
 
 
 class AuthorsAccessMixin:
-
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            if request.user.is_superuser or request.user.is_author:
+        user = request.user
+        if user.is_authenticated:
+            if user.is_superuser or user.is_author:
                 return super().dispatch(request, *args, **kwargs)
-
-            else:
-                return redirect("account:profile")
-        else:
-            return redirect("account:login")
+            return redirect("account:profile")
+        return redirect("account:login")
 
 
 class SuperuserAccessMixin:
-
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_superuser:
             return super().dispatch(request, *args, **kwargs)
-
-        else:
-            raise Http404("you can't see this page")
+        raise Http404("You don't have permission to access this page.")

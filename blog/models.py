@@ -5,38 +5,37 @@ from django.utils import timezone
 from extensions.utils import jalali_converter
 from django.utils.html import format_html
 from django.contrib.contenttypes.fields import GenericRelation
-
 from comment.models import Comment
-
 
 class ArticleManager(models.Manager):
     def published(self):
         return self.filter(status="p")
 
-
 class CategoryManager(models.Manager):
-    def published(self):
+    def active(self):
         return self.filter(status=True)
-
 
 class IPAddress(models.Model):
     ip_address = models.GenericIPAddressField(verbose_name='آدرس آی پی')
 
+    def __str__(self):
+        return self.ip_address
 
 class Category(models.Model):
     parents = models.ForeignKey(
         "self",
-        default=None,
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
         related_name="children",
-        verbose_name="زیر دست",
+        verbose_name="زیر دسته",
     )
     title = models.CharField(max_length=200, verbose_name="عنوان دسته بندی")
     slug = models.SlugField(max_length=100, unique=True, verbose_name="آدرس دسته بندی")
     status = models.BooleanField(default=True, verbose_name="آیا نمایش داده شود؟")
     position = models.IntegerField(default=0, verbose_name="پوزیشن")
+
+    objects = CategoryManager()
 
     class Meta:
         verbose_name = "دسته بندی"
@@ -46,16 +45,14 @@ class Category(models.Model):
     def __str__(self):
         return self.title
 
-    objects = CategoryManager()
-
-
 class Article(models.Model):
     STATUS_CHOICES = (
         ("d", "Draft"),
         ("p", "Published"),
-        ("i", "درحال بررسی"),  # investigation
-        ("b", "برگشت داده شده"),  # back
+        ("i", "درحال بررسی"),
+        ("b", "برگشت داده شده"),
     )
+
     author = models.ForeignKey(
         User,
         null=True,
@@ -76,46 +73,45 @@ class Article(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     is_special = models.BooleanField(default=False, verbose_name="مقاله ویژه")
-    status = models.CharField(
-        max_length=1, choices=STATUS_CHOICES, verbose_name="وضعیت"
-    )
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, verbose_name="وضعیت")
     comments = GenericRelation(Comment)
-    hits = models.ManyToManyField(IPAddress, through='ArticleHit', through_fields=('article', 'ip_address'), blank=True,
-                                  related_name='hits',
-                                  verbose_name='بازدید ها')
+    hits = models.ManyToManyField(
+        IPAddress,
+        through='ArticleHit',
+        through_fields=('article', 'ip_address'),
+        blank=True,
+        related_name='hits',
+        verbose_name='بازدید ها'
+    )
+
+    objects = ArticleManager()
 
     class Meta:
         verbose_name = "مقاله"
-        verbose_name_plural = "مقاله ها"
+        verbose_name_plural = "مقالات"
         ordering = ["-published"]
 
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
-        return reverse("account:home")
+        return reverse("blog:home")
 
     def jpublished(self):
         return jalali_converter(self.published)
-
     jpublished.short_description = "زمان انتشار"
 
     def thumbnail_tag(self):
-        return format_html(
-            "<img width=100px; height=75px; style=border-radius: 5px; src='{}'>".format(
-                self.thumbnail.url
+        if self.thumbnail:
+            return format_html(
+                "<img width=100 height=75 style='border-radius:5px;' src='{}'>".format(self.thumbnail.url)
             )
-        )
-
+        return "-"
     thumbnail_tag.short_description = "عکس"
 
     def category_to_str(self):
-        return "،".join([category.title for category in self.category.active()])
-
-    category_to_str.short_description = "دسته یندی"
-
-    objects = ArticleManager()
-
+        return "، ".join([cat.title for cat in self.category.active()])
+    category_to_str.short_description = "دسته بندی"
 
 class ArticleHit(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
